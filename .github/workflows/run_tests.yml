@@ -13,21 +13,16 @@ jobs:
     - name: Install pytest and reqeust
       run: |
         python -m pip install --upgrade pip
-        pip install requests pytest
+        pip install requests pytest boto3
+
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.ANUJAN_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.ANUJAN_SECRET_AWS_ACCESS_KEY_ID }}
+        aws-region: ap-southeast-2
+
     - name: Run component tests
       run: |
         pytest
-
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      with:
-        name: pytest-report
-        path: test-results.xml
-
-    - name: Publish Test Report Summary
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: Pytest Results
-        path: test-results.xml
-        reporter: java-junit
